@@ -1,17 +1,15 @@
 class Solution {
-    public int rob(int[] nums) {
-        int[] dp = new int[nums.length];
-        Arrays.fill(dp, -1);
-        return robUtil(nums, 0, dp);
+    public int paisa(int[] nums,int i,int[] map){
+        if(i==0)return nums[i];
+        if(i<0)return 0;
+        if(map[i]!=-1)return map[i];
+        int pick=nums[i]+paisa(nums,i-2,map);
+        int na=0+paisa(nums,i-1,map);
+        return map[i]= Math.max(pick,na);
     }
-
-    public int robUtil(int[] nums, int i, int[] dp) {
-        if(i >= nums.length) 
-            return 0;
-        if(dp[i] != -1) 
-            return dp[i];
-        int taken = nums[i] + robUtil(nums, i + 2, dp);
-        int notTaken = robUtil(nums, i + 1, dp);
-        return dp[i] = Integer.max(taken, notTaken);
+    public int rob(int[] nums) {
+        int[] map=new int[nums.length];
+        Arrays.fill(map,-1);
+        return paisa(nums,nums.length-1,map);
     }
 }
