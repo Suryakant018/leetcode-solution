@@ -1,23 +1,23 @@
 class Solution {
-       public int[][] insert(int[][] intervals, int[] newInterval) {
-        List<int[]> result = new ArrayList<>();
-        int n = intervals.length;
-        for(int i =0;i< n;i++){
-            int[] travel = intervals[i];
-            if(travel[1]<newInterval[0]){
-                result.add(travel);
-            }
-            else if(travel[0]>newInterval[1]){
-                result.add(newInterval);
-                newInterval=travel;
-            }
-            else{
-                newInterval[0]=Math.min(travel[0],newInterval[0]);
-                newInterval[1]=Math.max(travel[1],newInterval[1]);
-            }
-
+    public int[][] insert(int[][] intervals, int[] newInterval) {
+        List<int[]> res = new ArrayList<>();
+        int i=0;
+        while(i<intervals.length && intervals[i][1]<newInterval[0]){
+            res.add(intervals[i++]);
         }
-        result.add(newInterval);
-        return result.toArray(new int[result.size()][]);
+
+        while(i<intervals.length && intervals[i][0]<=newInterval[1]){
+            newInterval[0]=Math.min(newInterval[0],intervals[i][0]);
+            newInterval[1]=Math.max(newInterval[1],intervals[i][1]);
+            i++;
+        }
+
+        res.add(newInterval);
+
+        while(i<intervals.length){
+            res.add(intervals[i++]);
+        }
+
+        return res.toArray(new int[res.size()][]);
     }
 }
