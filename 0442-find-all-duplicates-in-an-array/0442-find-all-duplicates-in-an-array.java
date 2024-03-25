@@ -1,20 +1,14 @@
 class Solution {
     public List<Integer> findDuplicates(int[] nums) {
+        ArrayList<Integer> al = new ArrayList<>();
+        HashMap<Integer, Integer> hm = new HashMap<>();
 
-    List<Integer> resultSet = new ArrayList<>();
-
-    // Set to store unique numbers
-    Set<Integer> uniqueSet = new HashSet<>();
-    for (int num : nums) {
-
-      // If already present, then it is a duplicate
-      if (uniqueSet.contains(num))
-        resultSet.add(num);
-
-      // Add the number to the set
-      uniqueSet.add(num);
+        for(int i : nums) 
+            hm.put(i, hm.getOrDefault(i, 0) + 1); 
+        for(int i : hm.keySet()) {
+            if(hm.get(i) == 2)
+                al.add(i);
+        }
+        return al;
     }
-
-    return resultSet;
-  }
-    }
+}
