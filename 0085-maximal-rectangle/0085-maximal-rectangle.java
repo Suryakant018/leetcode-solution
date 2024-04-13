@@ -1,80 +1,47 @@
-class Pair {
-    int height;
-    int position;
-    Pair(int height,int position) {
-        this.height = height;
-        this.position = position;
-    }
-}
 class Solution {
     public int maximalRectangle(char[][] matrix) {
-        List<Integer> data = new ArrayList<Integer>();
-        for(int i=0;i<matrix[0].length;i++) {
-            data.add(Integer.parseInt(String.valueOf(matrix[0][i])));
+        if(matrix==null||matrix.length==0||matrix[0].length==0){
+            return 0;
         }
-        int maximum = MAH(data);
-        for(int i =1;i<matrix.length;i++) {
-           for(int j =0;j<matrix[0].length;j++) {
-              if(matrix[i][j] != '0')
-              {
-                  data.set(j,data.get(j)+ Integer.parseInt(String.valueOf(matrix[i][j])));
-              }
-              else
-              data.set(j,0);
-           } 
-           int d = MAH(data);
-           maximum = d > maximum ? d : maximum;
-        }
-        return maximum;
-    }
-    public int MAH(List<Integer> data) {
-        Stack<Pair> s = new Stack<Pair>();
-        //Nearest smallest from left and right
-        int left[] = new int[data.size()];
-        int right[] = new int[data.size()];
-        //left
-        for(int i=0;i<data.size();i++) {
-            if(s.size()==0)
-            left[i] = -1;
-            else if(s.peek().height<data.get(i))
-            left[i] = s.peek().position;
-            else {
-               while(s.size()>0 && s.peek().height>=data.get(i))
-               {
-                   s.pop();
-               }
-               if(s.size()==0)
-               left[i] = -1;
-               else
-               left[i] = s.peek().position;
+        int maxArea=0;
+        int cols=matrix[0].length;
+        int[] heights=new int[cols+1];
+        for(char[]row:matrix){
+            for(int i=0;i<cols;i++){
+                //update the heights of this histogram
+                if(row[i]=='1'){
+                    heights[i]++;
+                }else{
+                    heights[i]=0;
+                }
             }
-            s.push(new Pair(data.get(i),i));
+            //compute maximal rectangle in the histogram
+            maxArea=Math.max(maxArea,maxHistogramArea(heights));
         }
-        s.clear();
-        //right
-        for(int i=data.size()-1;i>=0;i--) {
-            if(s.size()==0)
-            right[i] = data.size();
-            else if(s.peek().height<data.get(i))
-            right[i] = s.peek().position;
-            else {
-               while(s.size()>0 && s.peek().height>=data.get(i))
-               {
-                   s.pop();
-               }
-               if(s.size()==0)
-               right[i] = data.size();
-               else
-               right[i] = s.peek().position;
-            }
-            s.push(new Pair(data.get(i),i));
-        }
-        int max = Integer.MIN_VALUE;
-        for(int j=0;j<right.length;j++) {
-            int w = data.get(j);
-            int area = w * (right[j] - left[j] -1);
-            max = area > max ? area : max;
-        }
-        return max;
+        return maxArea;
+        
     }
+    private int maxHistogramArea(int[] heights) {
+        int maxArea = 0;
+        int index = 0;
+        int[] stack = new int[heights.length];
+        int top = -1;
+
+        while (index < heights.length) {
+
+            //push to stack if the current bar is higher than the bar at stack top
+            if (top == -1 || heights[index] >= heights[stack[top]]) {
+                stack[++top] = index++;
+            } else {
+                int height = heights[stack[top--]];
+
+                //calculate width
+                int width = (top == -1) ? index : index - stack[top] - 1;
+                maxArea = Math.max(maxArea, height * width);
+            }
+        }
+
+        return maxArea;
+    }
+
 }
