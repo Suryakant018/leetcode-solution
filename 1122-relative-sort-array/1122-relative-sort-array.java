@@ -1,21 +1,30 @@
-class Solution {
+import java.util.*;
+
+public class Solution {
     public int[] relativeSortArray(int[] arr1, int[] arr2) {
-       int i1 = 0, i2 = 0;//i1 for putting in arr1 and i2 for traversing in arr2
-       int n = arr2.length;
-       while(i2 < n){
-        i1 = swap(arr1, arr2[i2++], i1);//for each element in arr2 find and swap arr1 with same value 
-       }
-        Arrays.sort(arr1,i1, arr1.length);// sort the remaining after the swaps
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < arr1.length; i++) {
+            map.put(arr1[i], map.getOrDefault(arr1[i], 0) + 1);
+        }
+        
+        int i = 0;
+        
+        for (int num : arr2) {
+            for (int j = 0; j < map.get(num); j++) {
+                arr1[i++] = num;
+            }
+            map.remove(num);
+        }
+        
+        int j = i;
+        for (int num : map.keySet()) {
+            for (int k = 0; k < map.get(num); k++) {
+                arr1[j++] = num;
+            }
+        }
+        
+        Arrays.sort(arr1, i, arr1.length);
         return arr1;
     }
-    int swap(int[] arr, int target, int from){
-       for(int i = from; i < arr.length; i++){
-         if(arr[i] == target){
-                int temp = arr[from];
-                arr[from++] =  arr[i];
-                arr[i] = temp;
-            }
-       }
-       return from;
-    }
 }
+
